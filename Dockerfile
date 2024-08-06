@@ -14,8 +14,7 @@ RUN npm run build
 FROM nginx:alpine
 
 COPY --from=build /app/dist /usr/share/nginx/html
-
-COPY /path/to/your/nginx.conf /etc/nginx/nginx.conf
+COPY /home/ubuntu/web/eoa_test/nginx.conf /etc/nginx/nginx.conf
 
 EXPOSE 80
 
