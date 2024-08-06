@@ -14,7 +14,7 @@ COPY package*.json ./
 COPY . .
 
 # Expose the port the app runs on
-EXPOSE 3000
+EXPOSE 5173
 
 # Command to run the React app using Vite
 CMD ["npm", "start"]
