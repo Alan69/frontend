@@ -3,50 +3,37 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { fetchTestQuestions, submitResult } from '../../api.js';
 
 const Quiz = () => {
-  const { testId } = useParams();
+  const { testIds } = useParams(); // Assuming testIds is a comma-separated string of test IDs
   const navigate = useNavigate();
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState({});
-  const [selectedTests, setSelectedTests] = useState([]);
-
-  useEffect(() => {
-    if (testId) {
-      setSelectedTests([testId]);
-    }
-  }, [testId]);
 
   useEffect(() => {
     const loadQuestions = async () => {
       try {
-        const response = await fetchTestQuestions(selectedTests);
+        const response = await fetchTestQuestions(testIds.split(','));
         setQuestions(response.data);
       } catch (error) {
         console.error("Failed to fetch questions", error);
       }
     };
 
-    if (selectedTests.length > 0) {
-      loadQuestions();
-    }
-  }, [selectedTests]);
+    loadQuestions();
+  }, [testIds]);
 
-  const handleTestSelection = (testId) => {
-    setSelectedTests(prevSelectedTests =>
-      prevSelectedTests.includes(testId)
-        ? prevSelectedTests.filter(id => id !== testId)
-        : [...prevSelectedTests, testId]
-    );
+  const handleOptionChange = (questionId, optionId) => {
+    setAnswers(prev => ({ ...prev, [questionId]: optionId }));
   };
 
   const handleSubmit = async () => {
     const currentQuestion = questions[currentQuestionIndex];
     const data = {
-      test: selectedTests.join(','), // Send all selected test IDs
+      test: testIds,
       question: currentQuestion.id,
       selected_option: answers[currentQuestion.id],
     };
-
+    
     try {
       await submitResult(data);
       if (currentQuestionIndex < questions.length - 1) {
