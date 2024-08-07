@@ -57,7 +57,7 @@ function App() {
           <Route path='payment' element={<Payment />} />
           <Route path='test' element={<Test />} />
           <Route path="/product/:id" element={<ProductDetail />} />
-          <Route path="/quiz/:testId" element={<Quiz/>} />
+          <Route path="/quiz/:testIds" element={<Quiz/>} />
         </Route>
       </Routes>
     </>
