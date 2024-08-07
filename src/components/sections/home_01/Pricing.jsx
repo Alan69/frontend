@@ -8,7 +8,7 @@ const Pricing = () => {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    axios.get('http://127.0.0.1:8000/tests/api/products/')
+    axios.get('https://synaqtest.kz/tests/api/products/')
       .then(response => {
         setProducts(response.data);
       })
