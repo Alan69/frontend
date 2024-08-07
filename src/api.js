@@ -7,5 +7,9 @@ const api = axios.create({
 
 export const fetchProducts = () => api.get('products/');
 export const fetchProductTests = (productId) => api.get(`products/${productId}/`);
-export const fetchTestQuestions = (testId) => api.get(`tests/${testId}/questions/`);
+export const fetchTestQuestions = (testIds) => api.get('tests/questions/', {
+  params: {
+      test_id: testIds,
+  },
+});
 export const submitResult = (data) => api.post('results/', data);

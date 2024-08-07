@@ -8,32 +8,45 @@ const Quiz = () => {
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState({});
+  const [selectedTests, setSelectedTests] = useState([]);
+
+  useEffect(() => {
+    if (testId) {
+      setSelectedTests([testId]);
+    }
+  }, [testId]);
 
   useEffect(() => {
     const loadQuestions = async () => {
       try {
-        const response = await fetchTestQuestions(testId);
+        const response = await fetchTestQuestions(selectedTests);
         setQuestions(response.data);
       } catch (error) {
         console.error("Failed to fetch questions", error);
       }
     };
 
-    loadQuestions();
-  }, [testId]);
+    if (selectedTests.length > 0) {
+      loadQuestions();
+    }
+  }, [selectedTests]);
 
-  const handleOptionChange = (questionId, optionId) => {
-    setAnswers(prev => ({ ...prev, [questionId]: optionId }));
+  const handleTestSelection = (testId) => {
+    setSelectedTests(prevSelectedTests =>
+      prevSelectedTests.includes(testId)
+        ? prevSelectedTests.filter(id => id !== testId)
+        : [...prevSelectedTests, testId]
+    );
   };
 
   const handleSubmit = async () => {
     const currentQuestion = questions[currentQuestionIndex];
     const data = {
-      test: testId,
+      test: selectedTests.join(','), // Send all selected test IDs
       question: currentQuestion.id,
       selected_option: answers[currentQuestion.id],
     };
-    
+
     try {
       await submitResult(data);
       if (currentQuestionIndex < questions.length - 1) {
