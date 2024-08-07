@@ -40,7 +40,7 @@ const Signup = () => {
     }
 
     try {
-      const response = await axios.post('http://synaqtest.kz/accounts/api/register/', {
+      const response = await axios.post('https://synaqtest.kz/accounts/api/register/', {
         username: input.username,
         email: input.email,
         first_name: input.first_name,

@@ -23,7 +23,7 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post('http://synaqtest.kz/accounts/api/login/', {
+      const response = await axios.post('https://synaqtest.kz/accounts/api/login/', {
         username: input.username,
         password: input.password,
       });

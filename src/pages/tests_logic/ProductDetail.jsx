@@ -14,11 +14,11 @@ const ProductDetail = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/tests/api/products/${id}/`);
+        const response = await axios.get(`https://synaqtest.kz/tests/api/products/${id}/`);
         setProduct(response.data);
 
         // Fetch associated tests
-        const testsResponse = await axios.get(`http://127.0.0.1:8000/tests/api/tests/?product=${id}`);
+        const testsResponse = await axios.get(`https://synaqtest.kz/tests/api/tests/?product=${id}`);
         setTests(testsResponse.data);
       } catch (error) {
         console.error('Error fetching product or tests', error);
@@ -51,7 +51,7 @@ const ProductDetail = () => {
     }
 
     try {
-      const response = await axios.post(`http://127.0.0.1:8000/tests/api/products/${product.id}/purchase/`);
+      const response = await axios.post(`https://synaqtest.kz/tests/api/products/${product.id}/purchase/`);
       if (response.status === 200) {
         navigate(`/quiz/${selectedTests.join(',')}`);
       }

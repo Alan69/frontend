@@ -19,7 +19,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get('http://synaqtest.kz/accounts/api/user/', {
+        const response = await axios.get('https://synaqtest.kz/accounts/api/user/', {
           headers: {
             Authorization: `Token ${localStorage.getItem('token')}`, // Adjust if using different auth
           },
@@ -52,7 +52,7 @@ const Profile = () => {
   const handleUpdateData = async (e) => {
     e.preventDefault();
     try {
-      await axios.put('http://synaqtest.kz/accounts/api/user/', input, {
+      await axios.put('https://synaqtest.kz/accounts/api/user/', input, {
         headers: {
           Authorization: `Token ${localStorage.getItem('token')}`, // Adjust if using different auth
         },
