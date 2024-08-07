@@ -1,42 +1,46 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchQuestionWithOptions, submitResult } from '../../api.js';
+import { fetchQuestion, submitResult } from '../../api.js';
 
 const Quiz = () => {
   const { testId } = useParams();
   const navigate = useNavigate();
   const [question, setQuestion] = useState(null);
   const [answers, setAnswers] = useState({});
-  const [currentQuestionId, setCurrentQuestionId] = useState(null);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
   useEffect(() => {
     const loadQuestion = async () => {
       try {
-        const response = await fetchQuestionWithOptions(testId, currentQuestionId);
+        const response = await fetchQuestion(testId, currentQuestionIndex);
         setQuestion(response.data);
-        setCurrentQuestionId(response.data.id); // Update current question ID
       } catch (error) {
         console.error("Failed to fetch question", error);
       }
     };
 
     loadQuestion();
-  }, [testId, currentQuestionId]);
+  }, [testId, currentQuestionIndex]);
 
   const handleOptionChange = (optionId) => {
-    setAnswers(prev => ({ ...prev, [currentQuestionId]: optionId }));
+    setAnswers(prev => ({ ...prev, [currentQuestionIndex]: optionId }));
   };
 
   const handleSubmit = async () => {
     const data = {
       test: testId,
-      question: currentQuestionId,
-      selected_option: answers[currentQuestionId],
+      question: question.id,
+      selected_option: answers[currentQuestionIndex],
     };
 
     try {
       await submitResult(data);
-      setCurrentQuestionId(null); // Trigger fetching of the next question
+      if (currentQuestionIndex < question.totalQuestions - 1) {
+        setCurrentQuestionIndex(currentQuestionIndex + 1);
+      } else {
+        alert('Quiz completed');
+        navigate('/');
+      }
     } catch (error) {
       console.error("Failed to submit result", error);
     }
@@ -50,15 +54,16 @@ const Quiz = () => {
         <div className="question-nav">
           <button
             className="nav-button prev-button"
-            onClick={() => setCurrentQuestionId(Math.max(0, currentQuestionId - 1))}
+            onClick={() => setCurrentQuestionIndex(Math.max(0, currentQuestionIndex - 1))}
+            disabled={currentQuestionIndex === 0}
           >
             Предыдущий вопрос
           </button>
           <button
             className="nav-button next-button"
-            onClick={() => setCurrentQuestionId(null)} // Fetch next question
+            onClick={handleSubmit}
           >
-            Следующий вопрос
+            {currentQuestionIndex < question.totalQuestions - 1 ? 'Следующий вопрос' : 'Завершить тест'}
           </button>
         </div>
         <h3>Тестовый раздел</h3>
@@ -73,21 +78,13 @@ const Quiz = () => {
                   type="radio"
                   name={`question_${question.id}`}
                   value={option.id}
-                  checked={answers[question.id] === option.id}
+                  checked={answers[currentQuestionIndex] === option.id}
                   onChange={() => handleOptionChange(option.id)}
                 />
                 {option.text}
               </label>
             ))}
           </div>
-        </div>
-        <div className="navigation-buttons">
-          <button
-            onClick={handleSubmit}
-            className='nav-button submit-button'
-          >
-            {currentQuestionId ? 'Следующий вопрос' : 'Завершить тест'}
-          </button>
         </div>
       </div>
     </main>

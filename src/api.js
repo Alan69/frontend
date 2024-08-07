@@ -6,10 +6,10 @@ const api = axios.create({
 
 export const fetchProducts = () => api.get('products/');
 export const fetchProductTests = (productId) => api.get(`products/${productId}/`);
-export const fetchQuestionWithOptions = (testId, questionId) => {
-  const url = questionId 
-    ? `questions/${questionId}/options/` 
-    : `tests/${testId}/questions/`; // Fetch the next question if questionId is null
-  return api.get(url);
-};
+export const fetchQuestion = (testId, questionIndex) => api.get(`questions/`, {
+  params: {
+    test_id: testId,
+    question_index: questionIndex,
+  }
+});
 export const submitResult = (data) => api.post('results/', data);
