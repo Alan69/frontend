@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchQuestion, submitResult } from '../../api.js';
+import { fetchTestQuestions, submitResult } from '../../api.js';
 
 const Quiz = () => {
   const { testId } = useParams();
@@ -14,7 +14,7 @@ const Quiz = () => {
   useEffect(() => {
     const loadQuestions = async () => {
       try {
-        const response = await fetchQuestion(testId);
+        const response = await fetchTestQuestions(testId);
         setQuestions(response.data);
         setLoading(false);
       } catch (error) {
@@ -94,7 +94,7 @@ const Quiz = () => {
             <h2>{currentQuestion.text}</h2>
           </div>
           <div className="answer-options">
-            {currentQuestion.options?.map(option => (
+            {currentQuestion.options && currentQuestion.options.map(option => (
               <label key={option.id}>
                 <input
                   type="radio"
