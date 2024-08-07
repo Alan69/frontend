@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:8000/tests/api/', // Update this to your base API URL
+  baseURL: 'http://synaqtest.kz/tests/api/', // Update this to your base API URL
 });
 
 export const fetchProducts = () => api.get('products/');
