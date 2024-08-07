@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { fetchTestQuestions, submitResult } from '../../api.js';
 
 const Quiz = () => {
-  const { testIds } = useParams(); // Assuming testIds is a comma-separated string of test IDs
+  const { testIds } = useParams();
   const navigate = useNavigate();
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -11,11 +11,16 @@ const Quiz = () => {
 
   useEffect(() => {
     const loadQuestions = async () => {
-      try {
-        const response = await fetchTestQuestions(testIds.split(','));
-        setQuestions(response.data);
-      } catch (error) {
-        console.error("Failed to fetch questions", error);
+      if (testIds) {
+        try {
+          const testIdsArray = testIds.split(','); // Ensure testIds is parsed correctly
+          const response = await fetchTestQuestions(testIdsArray);
+          setQuestions(response.data);
+        } catch (error) {
+          console.error("Failed to fetch questions", error);
+        }
+      } else {
+        console.error("No test IDs provided");
       }
     };
 
