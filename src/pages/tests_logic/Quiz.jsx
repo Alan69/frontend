@@ -1,60 +1,48 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchTestQuestions, submitResult } from '../../api.js';
+import { fetchQuestionWithOptions, submitResult } from '../../api.js';
 
 const Quiz = () => {
-  const { testIds } = useParams();
+  const { testId } = useParams();
   const navigate = useNavigate();
-  const [questions, setQuestions] = useState([]);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [question, setQuestion] = useState(null);
   const [answers, setAnswers] = useState({});
+  const [currentQuestionId, setCurrentQuestionId] = useState(null);
 
   useEffect(() => {
-    const loadQuestions = async () => {
-      if (testIds) {
-        try {
-          const testIdsArray = testIds.split(','); // Ensure testIds is parsed correctly
-          const response = await fetchTestQuestions(testIdsArray);
-          setQuestions(response.data);
-        } catch (error) {
-          console.error("Failed to fetch questions", error);
-        }
-      } else {
-        console.error("No test IDs provided");
+    const loadQuestion = async () => {
+      try {
+        const response = await fetchQuestionWithOptions(testId, currentQuestionId);
+        setQuestion(response.data);
+        setCurrentQuestionId(response.data.id); // Update current question ID
+      } catch (error) {
+        console.error("Failed to fetch question", error);
       }
     };
 
-    loadQuestions();
-  }, [testIds]);
+    loadQuestion();
+  }, [testId, currentQuestionId]);
 
-  const handleOptionChange = (questionId, optionId) => {
-    setAnswers(prev => ({ ...prev, [questionId]: optionId }));
+  const handleOptionChange = (optionId) => {
+    setAnswers(prev => ({ ...prev, [currentQuestionId]: optionId }));
   };
 
   const handleSubmit = async () => {
-    const currentQuestion = questions[currentQuestionIndex];
     const data = {
-      test: testIds,
-      question: currentQuestion.id,
-      selected_option: answers[currentQuestion.id],
+      test: testId,
+      question: currentQuestionId,
+      selected_option: answers[currentQuestionId],
     };
-    
+
     try {
       await submitResult(data);
-      if (currentQuestionIndex < questions.length - 1) {
-        setCurrentQuestionIndex(currentQuestionIndex + 1);
-      } else {
-        alert('Quiz completed');
-        navigate('/');
-      }
+      setCurrentQuestionId(null); // Trigger fetching of the next question
     } catch (error) {
       console.error("Failed to submit result", error);
     }
   };
 
-  if (questions.length === 0) return <div>Loading...</div>;
-
-  const currentQuestion = questions[currentQuestionIndex];
+  if (!question) return <div>Loading...</div>;
 
   return (
     <main className='quiz-page main-wrapper relative overflow-hidden pt-[150px] pb-[150px]'>
@@ -62,44 +50,31 @@ const Quiz = () => {
         <div className="question-nav">
           <button
             className="nav-button prev-button"
-            onClick={() => setCurrentQuestionIndex(Math.max(0, currentQuestionIndex - 1))}
+            onClick={() => setCurrentQuestionId(Math.max(0, currentQuestionId - 1))}
           >
             Предыдущий вопрос
           </button>
           <button
             className="nav-button next-button"
-            onClick={() => setCurrentQuestionIndex(Math.min(questions.length - 1, currentQuestionIndex + 1))}
+            onClick={() => setCurrentQuestionId(null)} // Fetch next question
           >
             Следующий вопрос
           </button>
         </div>
         <h3>Тестовый раздел</h3>
-        <div className="questions-list">
-          <div className="question-buttons">
-            {questions.map((_, index) => (
-              <button
-                key={index}
-                className={`question-btn ${currentQuestionIndex === index ? 'selected' : ''}`}
-                onClick={() => setCurrentQuestionIndex(index)}
-              >
-                {index + 1}
-              </button>
-            ))}
-          </div>
-        </div>
         <div className="content">
           <div className="question-text">
-            <h2>{currentQuestion.text}</h2>
+            <h2>{question.text}</h2>
           </div>
           <div className="answer-options">
-            {currentQuestion.options.map(option => (
+            {question.options.map(option => (
               <label key={option.id}>
                 <input
                   type="radio"
-                  name={`question_${currentQuestion.id}`}
+                  name={`question_${question.id}`}
                   value={option.id}
-                  checked={answers[currentQuestion.id] === option.id}
-                  onChange={() => handleOptionChange(currentQuestion.id, option.id)}
+                  checked={answers[question.id] === option.id}
+                  onChange={() => handleOptionChange(option.id)}
                 />
                 {option.text}
               </label>
@@ -111,7 +86,7 @@ const Quiz = () => {
             onClick={handleSubmit}
             className='nav-button submit-button'
           >
-            {currentQuestionIndex < questions.length - 1 ? 'Следующий вопрос' : 'Завершить тест'}
+            {currentQuestionId ? 'Следующий вопрос' : 'Завершить тест'}
           </button>
         </div>
       </div>

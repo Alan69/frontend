@@ -45,8 +45,8 @@ const ProductDetail = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (selectedTests.length < 2 || selectedTests.length > 5) {
-      setError('Пожалуйста, выберите от 2 до 5 тестов.');
+    if (selectedTests.length < 1 || selectedTests.length > 5) {
+      setError('Пожалуйста, выберите от 1 до 5 тестов.');
       return;
     }
 
