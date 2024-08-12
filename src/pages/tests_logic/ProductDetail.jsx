@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { fetchProduct, fetchTests, purchaseProduct } from '../../api.js';
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -12,20 +12,22 @@ const ProductDetail = () => {
   const [step, setStep] = useState(1);
 
   useEffect(() => {
-    const fetchProduct = async () => {
+    const fetchProductData = async () => {
       try {
-        const response = await axios.get(`https://synaqtest.kz/tests/api/products/${id}/`);
-        setProduct(response.data);
+        // Fetch product details
+        const productResponse = await fetchProduct(id);
+        setProduct(productResponse.data);
 
         // Fetch associated tests
-        const testsResponse = await axios.get(`https://synaqtest.kz/tests/api/tests/?product=${id}`);
+        const testsResponse = await fetchTests(id);
         setTests(testsResponse.data);
       } catch (error) {
         console.error('Error fetching product or tests', error);
+        setError('Не удалось загрузить данные. Попробуйте снова.');
       }
     };
 
-    fetchProduct();
+    fetchProductData();
   }, [id]);
 
   const handleTestChange = (e) => {
@@ -51,7 +53,7 @@ const ProductDetail = () => {
     }
 
     try {
-      const response = await axios.post(`https://synaqtest.kz/tests/api/products/${product.id}/purchase/`);
+      const response = await purchaseProduct(product.id);
       if (response.status === 200) {
         navigate(`/quiz/${selectedTests.join(',')}`);
       }

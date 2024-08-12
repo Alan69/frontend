@@ -32,7 +32,7 @@ const Pricing = () => {
                 className='jos flex justify-center'
                 data-jos_animation='fade'
               >
-                <div className='inline-flex space-x-4 rounded-[50px] border-2 border-[#2124B1] font-semibold'>
+                {/* <div className='inline-flex space-x-4 rounded-[50px] border-2 border-[#2124B1] font-semibold'>
                   <button
                     className={`tab-button price-button ${
                       activeTab === 0 ? 'active' : ''
@@ -51,7 +51,7 @@ const Pricing = () => {
                   >
                     Для учителей
                   </button>
-                </div>
+                </div> */}
               </div>
               <div className='mt-12 lg:mt-16 xl:mt-20'>
                 {activeTab === 0 && (

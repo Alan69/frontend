@@ -40,7 +40,7 @@ const Signup = () => {
     }
 
     try {
-      const response = await axios.post('https://synaqtest.kz/accounts/api/register/', {
+      const response = await axios.post('http://127.0.0.1:8000/accounts/api/register/', {
         username: input.username,
         email: input.email,
         first_name: input.first_name,
@@ -154,8 +154,8 @@ const Signup = () => {
                         />
                         <label htmlFor='signup-check' className='text-base leading-[1.6]'>
                           Я прочитал и ознакомился с 
-                          <Link to='#' className='font-bold hover:text-colorOrangyRed'>
-                            Правилами
+                          <Link to='#' className='font-bold hover:text-colorOrangyRed'> 
+                             Правилами
                           </Link>
                         </label>
                       </div>
@@ -167,33 +167,6 @@ const Signup = () => {
                       Создать аккаунт
                     </button>
                   </form>
-                  <div className='relative z-[1] mb-14 mt-9 text-center font-bold before:absolute before:left-0 before:top-1/2 before:-z-[1] before:h-[1px] before:w-full before:-translate-y-1/2 before:bg-[#EAEDF0]'>
-                    <span className='inline-block bg-white px-6'>Или</span>
-                  </div>
-                  <div className='flex flex-col gap-y-6'>
-                    <a className='button flex w-full justify-center gap-x-4 rounded-[50px] border-2 border-[#EAEDF0] bg-white py-4 hover:bg-slate-200 cursor-pointer'>
-                      <span className='hidden h-6 w-6 sm:inline-block'>
-                        <img
-                          src='assets/img/th-1/flat-color-icons-google.svg'
-                          alt='flat-color-icons-google'
-                          width={24}
-                          height={24}
-                        />
-                      </span>
-                      Зарегистрироваться с помощью Google
-                    </a>
-                    <a className='button flex w-full justify-center gap-x-4 rounded-[50px] border-2 border-[#EAEDF0] bg-white py-4 hover:bg-slate-200 cursor-pointer'>
-                      <span className='hidden h-6 w-6 sm:inline-block'>
-                        <img
-                          src='assets/img/th-1/flat-color-icon-facebook.svg'
-                          alt='flat-color-icon-facebook'
-                          width={24}
-                          height={24}
-                        />
-                      </span>
-                      Зарегистрироваться с помощью Facebook
-                    </a>
-                  </div>
                   <div className='mt-10 text-center'>
                     Уже есть аккаунт? &nbsp;
                     <Link to='/login' className='text-base font-semibold hover:text-colorOrangyRed'>

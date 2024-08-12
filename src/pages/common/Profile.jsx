@@ -3,6 +3,36 @@ import swal from 'sweetalert';
 import axios from 'axios';
 
 const Profile = () => {
+
+
+  const [token, setToken] = useState(localStorage.getItem('token') || '');
+
+  const handleUpdateBalance = async () => {
+        try {
+            const response = await axios.post(
+                'http://127.0.0.1:8000/payments/add-balance/',
+                {},
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    }
+                }
+            );
+
+            if (response.status === 200) {
+              console.log('Баланс добавлен:', response.data.success);
+              alert(`Успех: ${response.data.success}`);
+              window.location.reload(); // Обновить страницу после успешного добавления баланса
+          } else {
+              console.error('Неожиданный ответ:', response);
+              alert('Произошла непредвиденная ошибка.');
+          }
+          } catch (error) {
+              console.error('Ошибка при добавлении баланса:', error);
+              alert(`Ошибка: ${error.response?.data?.error || 'Произошла ошибка при добавлении баланса'}`);
+          }
+    };
+
   const [input, setInput] = useState({
     username: '',
     email: '',
@@ -19,9 +49,9 @@ const Profile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get('https://synaqtest.kz/accounts/api/user/', {
+        const response = await axios.get('http://127.0.0.1:8000/accounts/api/user/', {
           headers: {
-            Authorization: `Token ${localStorage.getItem('token')}`, // Adjust if using different auth
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
         });
         const userData = response.data;
@@ -31,14 +61,14 @@ const Profile = () => {
           first_name: userData.first_name || '',
           last_name: userData.last_name || '',
           region: userData.region || '',
-          institution: userData.institution || '',
-          phone: userData.phone || '',
+          institution: userData.school || '',
+          phone: userData.phone_number || '',
           balance: userData.balance || '0',
-          referral: userData.referral || '',
-          bonus: userData.bonus || '0',
+          referral: userData.referral_link || '',
+          bonus: userData.referral_bonus || '0',
         });
       } catch (error) {
-        swal('Error', 'Failed to fetch profile data', 'error');
+        swal('Ошибка', 'Не удалось получить данные профиля', 'error');
       }
     };
 
@@ -52,40 +82,37 @@ const Profile = () => {
   const handleUpdateData = async (e) => {
     e.preventDefault();
     try {
-      await axios.put('https://synaqtest.kz/accounts/api/user/', input, {
+      await axios.put('http://127.0.0.1:8000/accounts/api/user/', input, {
         headers: {
-          Authorization: `Token ${localStorage.getItem('token')}`, // Adjust if using different auth
+          Authorization: `Token ${localStorage.getItem('token')}`, // Подкорректируйте, если используете другой метод аутентификации
         },
       });
-      swal('Success', 'Profile updated successfully', 'success');
+      swal('Успешно', 'Профиль успешно обновлен', 'success');
     } catch (error) {
-      swal('Error', 'Failed to update profile data', 'error');
+      swal('Ошибка', 'Не удалось обновить данные профиля', 'error');
     }
   };
 
   const handleChangePassword = (e) => {
     e.preventDefault();
-    swal('Change Password', 'Password change functionality is not implemented yet', 'info');
+    swal('Изменить пароль', 'Функция смены пароля еще не реализована', 'info');
   };
 
-  const handleUpdateBalance = (e) => {
-    e.preventDefault();
-    swal('Update Balance', 'Balance update functionality is not implemented yet', 'info');
-  };
+  
 
   const handleAddFunds = (e) => {
     e.preventDefault();
-    swal('Add Funds', 'Add funds functionality is not implemented yet', 'info');
+    swal('Пополнить баланс', 'Функция пополнения баланса еще не реализована', 'info');
   };
 
   return (
     <div className="container mx-auto p-6">
       <div className='order-1 block rounded-lg bg-white px-[80px] py-[80px] md:order-2'>
-        <h2 className='font-bold leading-[1.6]'>Profile</h2>
+        <h2 className='font-bold leading-[1.6]'>Профиль</h2>
         <form onSubmit={handleUpdateData} className='flex flex-col gap-y-5'>
           <div className='grid grid-cols-1 gap-6 xl:grid-cols-2'>
             <div className='flex flex-col gap-y-[10px]'>
-              <label htmlFor='profile-username' className='text-lg font-bold leading-[1.6]'>Username</label>
+              <label htmlFor='profile-username' className='text-lg font-bold leading-[1.6]'>Имя пользователя</label>
               <input
                 type='text'
                 name='username'
@@ -97,7 +124,7 @@ const Profile = () => {
               />
             </div>
             <div className='flex flex-col gap-y-[10px]'>
-              <label htmlFor='profile-first_name' className='text-lg font-bold leading-[1.6]'>First Name</label>
+              <label htmlFor='profile-first_name' className='text-lg font-bold leading-[1.6]'>Имя</label>
               <input
                 type='text'
                 name='first_name'
@@ -108,7 +135,7 @@ const Profile = () => {
               />
             </div>
             <div className='flex flex-col gap-y-[10px]'>
-              <label htmlFor='profile-last_name' className='text-lg font-bold leading-[1.6]'>Last Name</label>
+              <label htmlFor='profile-last_name' className='text-lg font-bold leading-[1.6]'>Фамилия</label>
               <input
                 type='text'
                 name='last_name'
@@ -119,7 +146,7 @@ const Profile = () => {
               />
             </div>
             <div className='flex flex-col gap-y-[10px]'>
-              <label htmlFor='profile-region' className='text-lg font-bold leading-[1.6]'>Region</label>
+              <label htmlFor='profile-region' className='text-lg font-bold leading-[1.6]'>Регион</label>
               <input
                 type='text'
                 name='region'
@@ -130,7 +157,7 @@ const Profile = () => {
               />
             </div>
             <div className='flex flex-col gap-y-[10px]'>
-              <label htmlFor='profile-institution' className='text-lg font-bold leading-[1.6]'>Institution</label>
+              <label htmlFor='profile-institution' className='text-lg font-bold leading-[1.6]'>Учреждение</label>
               <input
                 type='text'
                 name='institution'
@@ -141,7 +168,7 @@ const Profile = () => {
               />
             </div>
             <div className='flex flex-col gap-y-[10px]'>
-              <label htmlFor='profile-email' className='text-lg font-bold leading-[1.6]'>Email</label>
+              <label htmlFor='profile-email' className='text-lg font-bold leading-[1.6]'>Электронная почта</label>
               <input
                 type='email'
                 name='email'
@@ -152,7 +179,7 @@ const Profile = () => {
               />
             </div>
             <div className='flex flex-col gap-y-[10px]'>
-              <label htmlFor='profile-phone' className='text-lg font-bold leading-[1.6]'>Phone</label>
+              <label htmlFor='profile-phone' className='text-lg font-bold leading-[1.6]'>Телефон</label>
               <input
                 type='tel'
                 name='phone'
@@ -163,7 +190,7 @@ const Profile = () => {
               />
             </div>
             <div className='flex flex-col gap-y-[10px]'>
-              <label htmlFor='profile-balance' className='text-lg font-bold leading-[1.6]'>Balance</label>
+              <label htmlFor='profile-balance' className='text-lg font-bold leading-[1.6]'>Баланс</label>
               <input
                 type='text'
                 name='balance'
@@ -175,7 +202,7 @@ const Profile = () => {
               />
             </div>
             <div className='flex flex-col gap-y-[10px]'>
-              <label htmlFor='profile-referral' className='text-lg font-bold leading-[1.6]'>Referral Link</label>
+              <label htmlFor='profile-referral' className='text-lg font-bold leading-[1.6]'>Реферальная ссылка</label>
               <input
                 type='text'
                 name='referral'
@@ -187,7 +214,7 @@ const Profile = () => {
               />
             </div>
             <div className='flex flex-col gap-y-[10px]'>
-              <label htmlFor='profile-bonus' className='text-lg font-bold leading-[1.6]'>Bonus</label>
+              <label htmlFor='profile-bonus' className='text-lg font-bold leading-[1.6]'>Бонус</label>
               <input
                 type='text'
                 name='bonus'
@@ -199,31 +226,42 @@ const Profile = () => {
               />
             </div>
           </div>
-          <div className='mt-5 flex gap-x-4'>
-            <button
-              type='submit'
-              className='button flex-1 rounded-[50px] border-2 border-black bg-black py-4 text-white after:bg-colorOrangyRed hover:border-colorOrangyRed hover:text-white'
-            >
-              Update Profile
-            </button>
-            <button
-              onClick={handleChangePassword}
-              className='button flex-1 rounded-[50px] border-2 border-black bg-black py-4 text-white after:bg-colorOrangyRed hover:border-colorOrangyRed hover:text-white'
-            >
-              Change Password
-            </button>
-            <button
-              onClick={handleUpdateBalance}
-              className='button flex-1 rounded-[50px] border-2 border-black bg-black py-4 text-white after:bg-colorOrangyRed hover:border-colorOrangyRed hover:text-white'
-            >
-              Update Balance
-            </button>
-            <button
-              onClick={handleAddFunds}
-              className='button flex-1 rounded-[50px] border-2 border-black bg-black py-4 text-white after:bg-colorOrangyRed hover:border-colorOrangyRed hover:text-white'
-            >
-              Add Funds
-            </button>
+          <div className='grid grid-cols-1 gap-6 xl:grid-cols-2'>
+            <div>
+              <button
+                type='submit'
+                className='w-full rounded-full bg-colorOrangyRed px-[60px] py-[17px] text-lg font-bold text-white transition-all hover:bg-black'
+              >
+                Обновить данные
+              </button>
+            </div>
+            <div>
+              <button
+                type='button'
+                onClick={handleChangePassword}
+                className='w-full rounded-full bg-black px-[60px] py-[17px] text-lg font-bold text-white transition-all hover:bg-colorOrangyRed'
+              >
+                Изменить пароль
+              </button>
+            </div>
+            <div>
+              <button
+                type='button'
+                onClick={handleUpdateBalance}
+                className='w-full rounded-full bg-black px-[60px] py-[17px] text-lg font-bold text-white transition-all hover:bg-colorOrangyRed'
+              >
+                Обновить баланс
+              </button>
+            </div>
+            <div>
+              <button
+                type='button'
+                onClick={handleAddFunds}
+                className='w-full rounded-full bg-black px-[60px] py-[17px] text-lg font-bold text-white transition-all hover:bg-colorOrangyRed'
+              >
+                Пополнить баланс
+              </button>
+            </div>
           </div>
         </form>
       </div>

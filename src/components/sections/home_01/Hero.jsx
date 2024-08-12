@@ -24,15 +24,15 @@ const Hero = () => {
                 >
                   Попробовать
                 </Link>
-                <Link
+                {/* <Link
                   to='/about'
                   className='button rounded-[50px] border-2 border-[#2124B1] bg-transparent py-4 text-black after:bg-[#2124B1] hover:border-[#2124B1] hover:text-white'
                 >
                   Узнать больше
-                </Link>
+                </Link> */}
               </div>
             </div>
-            <div className='jos hero-img overflow-hidden rounded-2xl bg-black' data-jos_animation='zoom'>
+            {/* <div className='jos hero-img overflow-hidden rounded-2xl bg-black' data-jos_animation='zoom'>
               <img
                 src='assets/img/th-1/q.gif'
                 alt='hero-dashboard'
@@ -40,7 +40,7 @@ const Hero = () => {
                 height='640'
                 className='h-auto w-full'
               />
-            </div>
+            </div> */}
             {/* <div className='my-10 h-[1px] w-full bg-[#DBD6CF] lg:my-16 xl:my-20'></div>
             <div className='jos brand-slider' data-jos_animation='fade'>
               <Swiper

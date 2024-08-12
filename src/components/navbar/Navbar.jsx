@@ -80,16 +80,16 @@ const Navbar = ({ mobileMenu, setMobileMenu, color }) => {
               Главная
             </Link>
           </li>
-          <li className='nav-item'>
+          {/* <li className='nav-item'>
             <Link to='/about' className='nav-link-item'>
               О нас
             </Link>
-          </li>
-          <li className='nav-item'>
+          </li> */}
+          {/* <li className='nav-item'>
             <Link to='/contact' className='nav-link-item'>
               Контакты
             </Link>
-          </li>
+          </li> */}
           <li className='nav-item'>
             <Link to='/profile' className='nav-link-item'>
               Профиль

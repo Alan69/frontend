@@ -1,87 +1,120 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { fetchTestQuestions, submitResult } from '../../api.js';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { fetchTests, fetchTestQuestions, submitResult, fetchOptions } from '../../api.js';
+import styles from './Quiz.module.css';
 
 const Quiz = () => {
-  const { testId } = useParams();
-  const navigate = useNavigate();
+  const { testIds } = useParams(); // Get test IDs from URL
+  const [tests, setTests] = useState([]);
+  const [currentTestIndex, setCurrentTestIndex] = useState(0);
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [answers, setAnswers] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [selectedOptions, setSelectedOptions] = useState({});
 
   useEffect(() => {
-    const loadQuestions = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetchTestQuestions(testId);
-        setQuestions(response.data);
-        setLoading(false);
+        const ids = testIds.split(',').map(id => parseInt(id, 10));
+        const response = await fetchTests(ids);
+        setTests(response.data);
+        if (response.data.length > 0) {
+          await loadQuestions(response.data[0].id);
+        }
       } catch (error) {
-        console.error("Failed to fetch questions", error);
-        setError("Failed to fetch questions");
-        setLoading(false);
+        console.error('Error fetching tests:', error);
       }
     };
 
-    loadQuestions();
-  }, [testId]);
+    fetchData();
+  }, [testIds]);
 
-  const handleOptionChange = (questionId, optionId) => {
-    setAnswers(prev => ({ ...prev, [questionId]: optionId }));
-  };
-
-  const handleSubmit = async () => {
-    const currentQuestion = questions[currentQuestionIndex];
-    const data = {
-      test: testId,
-      question: currentQuestion.id,
-      selected_option: answers[currentQuestion.id],
-    };
-    
+  const loadQuestions = async (testId) => {
     try {
-      await submitResult(data);
-      if (currentQuestionIndex < questions.length - 1) {
-        setCurrentQuestionIndex(currentQuestionIndex + 1);
-      } else {
-        alert('Quiz completed');
-        navigate('/');
+      const questionsResponse = await fetchTestQuestions(testId);
+      const optionsResponse = await fetchOptions();
+
+      // Log the responses to verify their structure
+      console.log('Questions Response:', questionsResponse);
+      console.log('Options Response:', optionsResponse);
+
+      if (!questionsResponse || !questionsResponse.data || !Array.isArray(questionsResponse.data)) {
+        throw new Error('No questions data received');
       }
+
+      if (!optionsResponse || !optionsResponse.data || !Array.isArray(optionsResponse.data)) {
+        throw new Error('No options data received');
+      }
+
+      const questions = questionsResponse.data;
+      questions.forEach(question => {
+        question.options = optionsResponse.data.filter(option => option.question === question.id);
+      });
+
+      setQuestions(questions);
     } catch (error) {
-      console.error("Failed to submit result", error);
+      console.error('Error fetching questions and options:', error);
     }
   };
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
-  if (questions.length === 0) return <div>No questions available</div>;
+  const handleNextTest = async () => {
+    const nextIndex = Math.min(currentTestIndex + 1, tests.length - 1);
+    setCurrentTestIndex(nextIndex);
+    await loadQuestions(tests[nextIndex].id);
+    setCurrentQuestionIndex(0);
+  };
 
-  const currentQuestion = questions[currentQuestionIndex];
+  const handlePreviousTest = async () => {
+    const prevIndex = Math.max(currentTestIndex - 1, 0);
+    setCurrentTestIndex(prevIndex);
+    await loadQuestions(tests[prevIndex].id);
+    setCurrentQuestionIndex(0);
+  };
+
+  const handleNextQuestion = () => {
+    const nextIndex = Math.min(currentQuestionIndex + 1, questions.length - 1);
+    setCurrentQuestionIndex(nextIndex);
+  };
+
+  const handlePreviousQuestion = () => {
+    const prevIndex = Math.max(currentQuestionIndex - 1, 0);
+    setCurrentQuestionIndex(prevIndex);
+  };
+
+  const handleOptionChange = (questionId, optionId) => {
+    setSelectedOptions(prevState => ({
+      ...prevState,
+      [questionId]: optionId
+    }));
+  };
+
+  const handleSubmit = async () => {
+    const results = Object.entries(selectedOptions).map(([questionId, optionId]) => ({
+      question: questionId,
+      selected_option: optionId
+    }));
+
+    try {
+      await submitResult({ results });
+      alert('Results submitted successfully!');
+    } catch (error) {
+      console.error('Error submitting results:', error);
+    }
+  };
 
   return (
-    <main className='quiz-page main-wrapper relative overflow-hidden pt-[150px] pb-[150px]'>
-      <div className="quiz-container">
-        <div className="question-nav">
-          <button
-            className="nav-button prev-button"
-            onClick={() => setCurrentQuestionIndex(Math.max(0, currentQuestionIndex - 1))}
-          >
-            Предыдущий вопрос
-          </button>
-          <button
-            className="nav-button next-button"
-            onClick={() => setCurrentQuestionIndex(Math.min(questions.length - 1, currentQuestionIndex + 1))}
-          >
-            Следующий вопрос
-          </button>
+    <main className={styles.testPage}>
+      <div className={styles.testContainer}>
+        <div className={styles.questionNav}>
+          <button className={styles.navButton} onClick={handlePreviousTest}>Предыдущий тест</button>
+          <button className={styles.navButton} onClick={handleNextTest}>Следующий тест</button>
         </div>
-        <h3>Тестовый раздел</h3>
-        <div className="questions-list">
-          <div className="question-buttons">
-            {questions.map((_, index) => (
+        <h3>Тест: {tests[currentTestIndex]?.title}</h3>
+        <div className={styles.questionsList}>
+          <div className={styles.questionButtons}>
+            {questions.map((question, index) => (
               <button
-                key={index}
-                className={`question-btn ${currentQuestionIndex === index ? 'selected' : ''}`}
+                key={question.id}
+                className={`${styles.questionBtn} ${currentQuestionIndex === index ? styles.selected : ''}`}
                 onClick={() => setCurrentQuestionIndex(index)}
               >
                 {index + 1}
@@ -89,33 +122,34 @@ const Quiz = () => {
             ))}
           </div>
         </div>
-        <div className="content">
-          <div className="question-text">
-            <h2>{currentQuestion.text}</h2>
-          </div>
-          <div className="answer-options">
-            {currentQuestion.options && currentQuestion.options.map(option => (
-              <label key={option.id}>
-                <input
-                  type="radio"
-                  name={`question_${currentQuestion.id}`}
-                  value={option.id}
-                  checked={answers[currentQuestion.id] === option.id}
-                  onChange={() => handleOptionChange(currentQuestion.id, option.id)}
-                />
-                {option.text}
-              </label>
-            ))}
-          </div>
+        <div className={styles.content}>
+          {questions.length > 0 && (
+            <>
+              <div className={styles.questionText}>
+                <p>{questions[currentQuestionIndex]?.text}</p>
+              </div>
+              <div className={styles.answerOptions}>
+                {questions[currentQuestionIndex]?.options.map(option => (
+                  <label key={option.id}>
+                    <input
+                      type="radio"
+                      name={`question_${questions[currentQuestionIndex].id}`}
+                      value={option.id}
+                      checked={selectedOptions[questions[currentQuestionIndex].id] === option.id}
+                      onChange={() => handleOptionChange(questions[currentQuestionIndex].id, option.id)}
+                    />
+                    {option.text}
+                  </label>
+                ))}
+              </div>
+            </>
+          )}
         </div>
-        <div className="navigation-buttons">
-          <button
-            onClick={handleSubmit}
-            className='nav-button submit-button'
-          >
-            {currentQuestionIndex < questions.length - 1 ? 'Следующий вопрос' : 'Завершить тест'}
-          </button>
+        <div className={styles.navigationButtons}>
+          <button className={styles.navButton} onClick={handlePreviousQuestion}>Предыдущий вопрос</button>
+          <button className={styles.navButton} onClick={handleNextQuestion}>Следующий вопрос</button>
         </div>
+        <button className={styles.submitButton} onClick={handleSubmit}>Submit</button>
       </div>
     </main>
   );
