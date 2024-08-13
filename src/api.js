@@ -1,9 +1,13 @@
 import axios from 'axios';
 
+// for post
 const api = axios.create({
-  baseURL: 'http://127.0.0.1:8000/tests/api/', // Update this to your base API URL
+  baseURL: 'https://synaqtest.kz/tests/api/',
 });
-const API_BASE_URL = 'http://127.0.0.1:8000/tests/api/';
+
+// for get
+const API_BASE_URL = 'https://synaqtest.kz/tests/api/';
+
 api.interceptors.request.use(config => {
   const token = localStorage.getItem('token');
   if (token) {
@@ -15,22 +19,24 @@ api.interceptors.request.use(config => {
 });
 
 export const fetchProduct = (productId) => api.get(`products/${productId}/`);
-export const fetchTests = (productId) => api.get('tests/', {
-  params: { product: productId }
-});
+
+// export const fetchTests = (productId) => api.get('tests/', {
+//   params: { product: productId }
+// });
+
 export const purchaseProduct = (productId) => api.post(`products/${productId}/purchase/`);
 
-// export const fetchTests = async (ids) => {
-//   try {
-//     const response = await axios.get(`${API_BASE_URL}tests/`, {
-//       params: { ids: ids.join(',') }
-//     });
-//     return response;
-//   } catch (error) {
-//     console.error('Error fetching tests:', error);
-//     return { data: [] }; // Return an empty array if an error occurs
-//   }
-// };
+export const fetchTests = async (productId) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}tests/`, {
+      params: { product: productId.join(',') }
+    });
+    return response;
+  } catch (error) {
+    console.error('Error fetching tests:', error);
+    return { data: [] }; // Return an empty array if an error occurs
+  }
+};
 
 export const fetchTestQuestions = async (testId) => {
   try {

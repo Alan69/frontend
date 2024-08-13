@@ -10,7 +10,7 @@ const Profile = () => {
   const handleUpdateBalance = async () => {
         try {
             const response = await axios.post(
-                'http://127.0.0.1:8000/payments/add-balance/',
+                'https://synaqtest.kz/payments/add-balance/',
                 {},
                 {
                     headers: {
@@ -49,7 +49,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:8000/accounts/api/user/', {
+        const response = await axios.get('https://synaqtest.kz/accounts/api/user/', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },

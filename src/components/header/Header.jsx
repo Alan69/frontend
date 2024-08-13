@@ -27,7 +27,7 @@ const Header = ({ loginCSS, signupCSS, navColor, light }) => {
 
     try {
       const response = await axios.post(
-        'http://127.0.0.1:8000/accounts/api/logout/',
+        'https://synaqtest.kz/accounts/api/logout/',
         { refresh: refreshToken },
         {
           headers: {
