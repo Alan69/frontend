@@ -20,23 +20,23 @@ api.interceptors.request.use(config => {
 
 export const fetchProduct = (productId) => api.get(`products/${productId}/`);
 
-// export const fetchTests = (productId) => api.get('tests/', {
-//   params: { product: productId }
-// });
+export const fetchTests = (productId) => api.get('tests/', {
+  params: { product: productId }
+});
 
 export const purchaseProduct = (productId) => api.post(`products/${productId}/purchase/`);
 
-export const fetchTests = async (productId) => {
-  try {
-    const response = await axios.get(`${API_BASE_URL}tests/`, {
-      params: { product: productId.join(',') }
-    });
-    return response;
-  } catch (error) {
-    console.error('Error fetching tests:', error);
-    return { data: [] }; // Return an empty array if an error occurs
-  }
-};
+// export const fetchTests = async (productId) => {
+//   try {
+//     const response = await axios.get(`${API_BASE_URL}tests/`, {
+//       params: { product: productId.join(',') }
+//     });
+//     return response;
+//   } catch (error) {
+//     console.error('Error fetching tests:', error);
+//     return { data: [] }; // Return an empty array if an error occurs
+//   }
+// };
 
 export const fetchTestQuestions = async (testId) => {
   try {
