@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import useTabs from '../../../hooks/useTabs';
+import { BASE_URL } from './../../../base.js';
 
 const Pricing = () => {
   const [activeTab, handleTab] = useTabs();
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    axios.get('https://synaqtest.kz/tests/api/products/')
+    axios.get(`${BASE_URL}/tests/api/products/`)
       .then(response => {
         setProducts(response.data);
       })

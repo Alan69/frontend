@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import swal from 'sweetalert';
 import axios from 'axios';
+import { BASE_URL } from './../../base.js';
 
 const Signup = () => {
   const [input, setInput] = useState({
@@ -40,7 +41,7 @@ const Signup = () => {
     }
 
     try {
-      const response = await axios.post('https://synaqtest.kz/accounts/api/register/', {
+      const response = await axios.post(`${BASE_URL}/accounts/api/register/`, {
         username: input.username,
         email: input.email,
         first_name: input.first_name,

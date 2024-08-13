@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Navbar from '../navbar/Navbar';
 import Logo from '../logo/Logo';
+import { BASE_URL } from './../../base.js';
 
 const Header = ({ loginCSS, signupCSS, navColor, light }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -27,7 +28,7 @@ const Header = ({ loginCSS, signupCSS, navColor, light }) => {
 
     try {
       const response = await axios.post(
-        'https://synaqtest.kz/accounts/api/logout/',
+        `${BASE_URL}/accounts/api/logout/`,
         { refresh: refreshToken },
         {
           headers: {

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import swal from 'sweetalert';
 import axios from 'axios';
-
+import { BASE_URL } from './../../base.js';
 const Profile = () => {
 
 
@@ -10,7 +10,7 @@ const Profile = () => {
   const handleUpdateBalance = async () => {
         try {
             const response = await axios.post(
-                'https://synaqtest.kz/payments/add-balance/',
+                `${BASE_URL}/payments/add-balance/`,
                 {},
                 {
                     headers: {
@@ -49,7 +49,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get('https://synaqtest.kz/accounts/api/user/', {
+        const response = await axios.get(`${BASE_URL}/accounts/api/user/`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },

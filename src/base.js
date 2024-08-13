@@ -1,97 +1,94 @@
 // api.js
 
-const BASE_URL = 'http://127.0.0.1:8000';
+// Base URL for the API
+// TODO эту хуйню надо в .env запихать заебал
+export const BASE_URL = 'https://synaqtest.kz';
 
-// Function to handle GET requests
-export async function get(endpoint) {
+// все эти функция на будущее пока что они не используются
+export async function getData(endpoint) {
     try {
-        const response = await fetch(`${BASE_URL}${endpoint}`, {
+        const response = await fetch(`${BASE_URL}/${endpoint}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                // Add authorization header if needed
-                // 'Authorization': `Bearer ${token}`
             },
         });
-
+        
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error(`Error: ${response.status}`);
         }
 
-        return await response.json();
+        const data = await response.json();
+        return data;
     } catch (error) {
-        console.error('Error in GET request:', error);
+        console.error('Error fetching data:', error);
         throw error;
     }
 }
 
-// Function to handle POST requests
-export async function post(endpoint, data) {
+// Function to make POST requests
+export async function postData(endpoint, payload) {
     try {
-        const response = await fetch(`${BASE_URL}${endpoint}`, {
+        const response = await fetch(`${BASE_URL}/${endpoint}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                // Add authorization header if needed
-                // 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify(data),
+            body: JSON.stringify(payload),
         });
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error(`Error: ${response.status}`);
         }
 
-        return await response.json();
+        const data = await response.json();
+        return data;
     } catch (error) {
-        console.error('Error in POST request:', error);
+        console.error('Error posting data:', error);
         throw error;
     }
 }
 
-// Function to handle PUT requests
-export async function put(endpoint, data) {
+// Function to make PUT requests
+export async function putData(endpoint, payload) {
     try {
-        const response = await fetch(`${BASE_URL}${endpoint}`, {
+        const response = await fetch(`${BASE_URL}/${endpoint}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                // Add authorization header if needed
-                // 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify(data),
+            body: JSON.stringify(payload),
         });
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error(`Error: ${response.status}`);
         }
 
-        return await response.json();
+        const data = await response.json();
+        return data;
     } catch (error) {
-        console.error('Error in PUT request:', error);
+        console.error('Error putting data:', error);
         throw error;
     }
 }
 
-// Function to handle DELETE requests
-export async function del(endpoint) {
+// Function to make DELETE requests
+export async function deleteData(endpoint) {
     try {
-        const response = await fetch(`${BASE_URL}${endpoint}`, {
+        const response = await fetch(`${BASE_URL}/${endpoint}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
-                // Add authorization header if needed
-                // 'Authorization': `Bearer ${token}`
             },
         });
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error(`Error: ${response.status}`);
         }
 
-        return await response.json();
+        return 'Successfully deleted';
     } catch (error) {
-        console.error('Error in DELETE request:', error);
+        console.error('Error deleting data:', error);
         throw error;
     }
 }

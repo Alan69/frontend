@@ -1,12 +1,13 @@
 import axios from 'axios';
+import { BASE_URL } from './base.js';
 
 // for post
 const api = axios.create({
-  baseURL: 'https://synaqtest.kz/tests/api/',
+  baseURL: `${BASE_URL}/tests/api/`,
 });
 
 // for get
-const API_BASE_URL = 'https://synaqtest.kz/tests/api/';
+const API_BASE_URL = `${BASE_URL}/tests/api/`;
 
 api.interceptors.request.use(config => {
   const token = localStorage.getItem('token');

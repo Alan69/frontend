@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import swal from 'sweetalert';
 import axios from 'axios';
-import {post} from './../../base.js'
+import { BASE_URL } from './../../base.js';
 
 const Login = () => {
   const [input, setInput] = useState({
@@ -25,7 +25,7 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post('https://synaqtest.kz/accounts/api/login/', {
+      const response = await axios.post(`${BASE_URL}/accounts/api/login/`, {
         username: input.username,
         password: input.password,
       });
