@@ -2,6 +2,7 @@
 
 // Base URL for the API
 // TODO эту хуйню надо в .env запихать заебал
+// prod https://synaqtest.kz local http://127.0.0.1:8000
 export const BASE_URL = 'https://synaqtest.kz';
 
 // все эти функция на будущее пока что они не используются
